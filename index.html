@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>UDL 課堂教材入口</title>
+  <style>
+    :root {
+      --bg: #f6f3ec;
+      --paper: #fffdf8;
+      --ink: #161616;
+      --muted: #4a4a4a;
+      --line: #d9d2c4;
+      --teal: #0b5f56;
+      --teal-ink: #06332e;
+      --wait: #6b6458;
+      --warn: #8a4b00;
+      --warn-bg: #fff4e5;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; background: var(--bg); color: var(--ink); }
+    body {
+      font-family: "PingFang TC", "Noto Sans TC", "Hiragino Sans GB", sans-serif;
+      font-size: 1.125rem;
+      line-height: 1.65;
+    }
+    a { color: var(--teal); }
+    a:focus-visible {
+      outline: 3px solid var(--teal);
+      outline-offset: 3px;
+    }
+    .wrap { width: min(920px, calc(100% - 32px)); margin: 0 auto; padding: 28px 0 80px; }
+    header h1 { font-size: clamp(1.8rem, 4vw, 2.4rem); line-height: 1.25; margin: 0 0 8px; }
+    .lede { color: var(--muted); margin: 0 0 28px; max-width: 42rem; }
+    .how, .year, .note {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 20px 22px;
+      margin-bottom: 20px;
+    }
+    .how h2, .year h2, .book h3 { margin: 0 0 12px; }
+    .how ol { margin: 0; padding-left: 1.3em; }
+    .how li { margin: 0 0 8px; }
+    .tabs { display: grid; gap: 8px; margin-top: 12px; }
+    .tabs span {
+      display: block;
+      padding: 10px 12px;
+      background: #eef6f4;
+      border-radius: 10px;
+    }
+    .tabs b { color: var(--teal-ink); }
+    .summary { display: flex; flex-wrap: wrap; gap: 8px 16px; color: var(--muted); margin: 0 0 8px; }
+    .book { margin-top: 18px; }
+    .book h3 { font-size: 1.2rem; }
+    .list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+    .row {
+      display: grid;
+      grid-template-columns: 4.5rem 1fr auto;
+      gap: 10px;
+      align-items: center;
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+      min-height: 56px;
+    }
+    .no { font-variant-numeric: tabular-nums; color: var(--muted); font-weight: 600; white-space: nowrap; }
+    .meta { display: block; color: var(--muted); font-size: 0.95rem; }
+    .open {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      min-width: 108px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: var(--teal);
+      color: #fff;
+      text-decoration: none;
+      font-weight: 700;
+    }
+    .open:hover { background: var(--teal-ink); }
+    .warn {
+      grid-column: 1 / -1;
+      margin: -4px 0 0;
+      padding: 8px 10px;
+      background: var(--warn-bg);
+      color: var(--warn);
+      border-radius: 8px;
+      font-size: 0.95rem;
+    }
+    footer { margin-top: 28px; color: var(--muted); font-size: 0.95rem; }
+    @media (max-width: 640px) {
+      .row { grid-template-columns: auto 1fr; }
+      .open { grid-column: 2; justify-self: start; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header>
+      <h1>UDL 課堂教材入口</h1>
+      <p class="lede">給老師與學生用的目錄。先點課名，再用老師給的課堂密碼進入朗讀器。</p>
+    </header>
+
+    <section class="how" aria-labelledby="how-title">
+      <h2 id="how-title">怎麼用</h2>
+      <ol>
+        <li>用 Safari 或 Chrome 打開這一頁。</li>
+        <li>點課名旁的「打開教材」。下一頁會先問密碼，密碼請問老師，不要寫在聯絡簿或公開群組以外的地方。</li>
+        <li>進去以後有四個頁籤：原文朗讀、簡易版、識字、小測驗。</li>
+        <li>若畫面或聲音怪怪的，先關掉舊分頁，再從這一頁重開。</li>
+      </ol>
+      <div class="tabs" aria-label="打開以後會看到的四個頁籤">
+        <span><b>原文朗讀</b>：課本原句，可翻頁、看注音、聽整頁。</span>
+        <span><b>簡易版</b>：字比較少、句子比較短，給跟班學生。</span>
+        <span><b>識字</b>：生字與語詞練習。</span>
+        <span><b>小測驗</b>：課堂練習用。還沒接到學生登入。</span>
+      </div>
+    </section>
+
+    <section class="year" aria-labelledby="y115">
+      <h2 id="y115">115 學年度　南一國語</h2>
+      <p class="summary">
+        <span>四年級上：12 / 12 課可打開</span>
+      </p>
+      <p class="meta">每課都有課堂密碼門。課文只供班級使用。</p>
+
+      <article class="book" aria-labelledby="g4">
+        <h3 id="g4">四年級上（第七冊）</h3>
+        <ul class="list">
+          <li class="row"><span class="no">第 1 課</span><div>窗口邊的臺灣欒樹 <span class="meta">王素涼</span></div><a class="open" href="115/nan4a/nan4a-01-luan.html">打開教材</a></li>
+          <li class="row"><span class="no">第 2 課</span><div>奶奶的排骨粥 <span class="meta">曾谷涵</span></div><a class="open" href="115/nan4a/nan4a-02-congee.html">打開教材</a></li>
+          <li class="row"><span class="no">第 3 課</span><div>充滿希望的五味屋</div><a class="open" href="115/nan4a/nan4a-03-wuwei.html">打開教材</a></li>
+          <li class="row"><span class="no">第 4 課</span><div>玉山之歌 <span class="meta">路寒袖</span></div><a class="open" href="115/nan4a/nan4a-04-yushan.html">打開教材</a></li>
+          <li class="row"><span class="no">第 5 課</span><div>高舉臺灣之光</div><a class="open" href="115/nan4a/nan4a-05-guo.html">打開教材</a></li>
+          <li class="row"><span class="no">第 6 課</span><div>臺灣的驕傲 <span class="meta">許傑</span></div><a class="open" href="115/nan4a/nan4a-06-pride.html">打開教材</a></li>
+          <li class="row"><span class="no">第 7 課</span><div>到此「藝」遊 <span class="meta">陳碏</span></div><a class="open" href="115/nan4a/nan4a-07-yilan.html">打開教材</a></li>
+          <li class="row"><span class="no">第 8 課</span><div>四季的頭髮 <span class="meta">林世仁</span></div><a class="open" href="115/nan4a/nan4a-08-hair.html">打開教材</a></li>
+          <li class="row"><span class="no">第 9 課</span><div>阿白觀察記</div><a class="open" href="115/nan4a/nan4a-09-bai.html">打開教材</a></li>
+          <li class="row">
+            <span class="no">第 10 課</span>
+            <div>老鼠嫁女兒</div>
+            <a class="open" href="115/nan4a/nan4a-10-mouse.html">打開教材</a>
+            <p class="warn">可以上課。連貫插圖還沒做完，圖可能不太連。</p>
+          </li>
+          <li class="row"><span class="no">第 11 課</span><div>豆粥婆婆</div><a class="open" href="115/nan4a/nan4a-11-porridge.html">打開教材</a></li>
+          <li class="row"><span class="no">第 12 課</span><div>戴斗笠的地藏</div><a class="open" href="115/nan4a/nan4a-12-jizo.html">打開教材</a></li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="note">
+      <h2>使用說明</h2>
+      <p>課文來自南一 115 學年度國語四上，僅供班級課堂使用，請勿轉載。插圖與朗讀器是資源班自製教材。</p>
+      <p>密碼請向老師索取。不要把密碼寫進這個網站、GitHub README，或公開貼文。</p>
+    </section>
+
+    <footer>
+      <p>更新於 2026-09-07。六上教材尚未放到這個網站。</p>
+    </footer>
+  </main>
+</body>
+</html>
