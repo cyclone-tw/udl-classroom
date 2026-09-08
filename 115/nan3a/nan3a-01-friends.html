@@ -230,6 +230,18 @@
   .replay-btn:focus-visible { outline: 3px solid #9f1239; outline-offset: 2px; }
   .tile.flash-ok, .choices button.flash-ok { animation: pop-ok 0.35s ease; outline: 4px solid var(--ok); }
   .tile.flash-no, .choices button.flash-no { animation: shake-no 0.4s ease; outline: 4px solid #b91c1c; }
+  .choices button.pick, .tile { position: relative; }
+  .reveal-ok {
+    outline: 4px solid var(--ok) !important;
+    box-shadow: 0 0 0 3px #fff, 0 0 0 7px var(--ok);
+  }
+  .reveal-no { outline: 4px solid #b91c1c !important; opacity: 0.78; }
+  .reveal-ok::after {
+    content: "正解";
+    position: absolute; top: 6px; left: 6px; z-index: 2;
+    background: var(--ok); color: #fff; font-size: 0.95rem; font-weight: 800;
+    line-height: 1.2; padding: 3px 8px; border-radius: 8px;
+  }
   @keyframes pop-ok { 0% { transform: scale(1); } 45% { transform: scale(1.08); } 100% { transform: scale(1); } }
   @keyframes shake-no {
     0%, 100% { transform: translateX(0); }
@@ -752,6 +764,36 @@ function flash(el, ok) {
   void el.offsetWidth;
   el.classList.add(ok ? "flash-ok" : "flash-no");
 }
+function clearReveal(root) {
+  if (!root) return;
+  root.querySelectorAll(".reveal-ok, .reveal-no").forEach((el) => {
+    el.classList.remove("reveal-ok", "reveal-no");
+  });
+}
+function markCorrectChoice(clicked) {
+  const wrap = clicked && clicked.closest(".choices");
+  if (!wrap) return;
+  clearReveal(wrap);
+  clicked.classList.add("reveal-no");
+  const right = wrap.querySelector('[data-ok="1"]');
+  if (right && right !== clicked) {
+    right.classList.add("reveal-ok");
+    flash(right, true);
+  }
+}
+function markCorrectMatch(first, second, root) {
+  if (!root || !first) return;
+  clearReveal(root);
+  first.classList.add("reveal-no");
+  if (second) second.classList.add("reveal-no");
+  const partner = [...root.querySelectorAll(".tile")].find((el) => (
+    el.dataset.key === first.dataset.key && el.dataset.side !== first.dataset.side
+  ));
+  if (partner && partner !== second) {
+    partner.classList.add("reveal-ok");
+    flash(partner, true);
+  }
+}
 function accuracyText(stats) {
   if (!stats.total) return "已答 0　答對 0　正確率 尚無";
   const pct = Math.round((stats.correct / stats.total) * 100);
@@ -1003,6 +1045,7 @@ function itemByKey(key) {
 function pickLit(tile) {
   if (tile.classList.contains("matched")) return;
   if (!litPick) {
+    clearReveal(document.getElementById("literacyPanel"));
     document.querySelectorAll("#literacyPanel .tile.picked").forEach((el) => el.classList.remove("picked"));
     tile.classList.add("picked");
     litPick = tile;
@@ -1031,7 +1074,8 @@ function pickLit(tile) {
   } else {
     litRoundWrong += 1;
     recordEvent(litStats, item, false);
-    setStatus("litMsg", "再試一次。", "no");
+    markCorrectMatch(litPick, tile, document.getElementById("literacyPanel"));
+    setStatus("litMsg", "答錯了。正解已標出來。再試一次。", "no");
   }
   litPick.classList.remove("picked");
   litPick = null;
@@ -1062,6 +1106,7 @@ function renderSentMatch(bank, track) {
   const onPick = (tile) => {
     if (tile.classList.contains("matched")) return;
     if (!pick) {
+      clearReveal(board);
       board.querySelectorAll(".tile.picked").forEach((el) => el.classList.remove("picked"));
       tile.classList.add("picked");
       pick = tile;
@@ -1076,7 +1121,8 @@ function renderSentMatch(bank, track) {
     const ok = pick.dataset.key === tile.dataset.key;
     playFeedback(ok);
     flash(tile, ok); flash(pick, ok);
-    setStatus("quizMsg", ok ? "配對成功。" : "再試一次。", ok ? "ok" : "no");
+    if (!ok) markCorrectMatch(pick, tile, board);
+    setStatus("quizMsg", ok ? "配對成功。" : "答錯了。正解已標出來。再試一次。", ok ? "ok" : "no");
     if (ok) {
       const page = bank.find((p) => p.id === tile.dataset.key) || {};
       recordEvent(quizStats, {
@@ -1182,13 +1228,14 @@ function gradeChoice(btn, ok, item, doneMsg) {
   quizLocked = true;
   playFeedback(ok);
   flash(btn, ok);
+  if (!ok) markCorrectChoice(btn);
   recordEvent(quizStats, item, ok);
   const last = quizStats.total >= quizLimit;
   setStatus("quizMsg", ok
     ? (last ? (doneMsg || "答對了。") + " 本趟結束。" : (doneMsg || "答對了。"))
-    : (last ? "答錯了。本趟結束，看成績。" : "答錯了，按下一題換新題。"),
+    : (last ? "答錯了。正解已標出來。按下一題看成績。" : "答錯了。正解已標出來。按下一題換新題。"),
     ok ? "ok" : "no");
-  if (last) finishQuiz();
+  if (last && ok) finishQuiz();
 }
 function bindListen(btn, playFn) {
   btn.type = "button";
@@ -1225,6 +1272,7 @@ function fillChoices(wrap, options, onPick, kind) {
     b.className = `pick pick-${i % 4}`;
     if (opt.html) b.innerHTML = opt.html;
     else b.textContent = opt.label;
+    if (opt.ok) b.dataset.ok = "1";
     b.onclick = () => onPick(b, opt);
     wrap.appendChild(b);
   });
@@ -1248,7 +1296,9 @@ function renderItemQuiz(kind) {
     if (item.audio) await playUrl(item.audio); else speak(item.word);
   }));
   const wrap = document.createElement("div");
-  fillChoices(wrap, shuffle([item, ...distract]).map((opt) => ({ label: opt.word, opt })), (b, row) => {
+  fillChoices(wrap, shuffle([item, ...distract]).map((opt) => ({
+    label: opt.word, opt, ok: opt.key === item.key,
+  })), (b, row) => {
     const opt = row.opt;
     gradeChoice(b, opt.key === item.key, Object.assign({}, item, {
       prompt: item.zhuyin || item.word, chosen: opt.word, correct: item.word,
@@ -1288,7 +1338,7 @@ function renderQuiz() {
     }));
     const wrap = document.createElement("div");
     fillChoices(wrap, shuffle([item, ...others]).map((opt) => ({
-      html: `<img src="${opt.image}" alt="${opt.imageAlt || ""}">`, opt,
+      html: `<img src="${opt.image}" alt="${opt.imageAlt || ""}">`, opt, ok: opt.id === item.id,
     })), (b, row) => {
       const opt = row.opt;
       gradeChoice(b, opt.id === item.id, {
@@ -1307,7 +1357,7 @@ function renderQuiz() {
     body.appendChild(stem);
     const wrap = document.createElement("div");
     fillChoices(wrap, shuffle([item, ...others]).map((opt) => ({
-      label: (opt[track].speakLines || []).join(""), opt,
+      label: (opt[track].speakLines || []).join(""), opt, ok: opt.id === item.id,
     })), (b, row) => {
       const opt = row.opt;
       const label = (opt[track].speakLines || []).join("");
@@ -1357,6 +1407,7 @@ document.querySelectorAll("[data-quiz]").forEach((b) => b.addEventListener("clic
 }));
 document.getElementById("quizNext").onclick = () => {
   if (quizDone) return;
+  if (quizStats.total >= quizLimit) { finishQuiz(); return; }
   if (quizMode === "char-quiz" || quizMode === "phrase-quiz") quizCursor += 1;
   renderQuiz();
 };
