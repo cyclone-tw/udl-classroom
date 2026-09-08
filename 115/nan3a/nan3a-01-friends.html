@@ -35,6 +35,7 @@
     font: inherit; min-height: 48px; border-radius: 14px; border: 0;
   }
   button, select { font: inherit; border-radius: 14px; border: 0; }
+  [hidden] { display: none !important; }
   html, body { max-width: 100%; overflow-x: hidden; }
   #app {
     height: 100%; width: 100%; max-width: 100%;
@@ -114,7 +115,15 @@
   }
   #readPanel .stage { flex: 1; min-height: 0; }
   #quizPlay { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 10px; }
-  #quizBody { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 10px; overflow: hidden; }
+  #quizBody { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 10px; overflow: auto; -webkit-overflow-scrolling: touch; }
+  #quizBody.pic-sent {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(280px, 1fr);
+    grid-template-rows: minmax(0, 1fr);
+    align-items: start;
+  }
+  #quizBody.pic-sent .quiz-stem { min-height: 0; }
+  #quizBody.pic-sent .stem-img { max-height: min(42vh, 100%); width: 100%; object-fit: contain; }
   #quizMsg { flex: 0 0 auto; margin-top: 0; }
   #quizNextWrap { flex: 0 0 auto; padding-top: 8px; }
   .board { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; }
@@ -159,10 +168,11 @@
     padding: 16px 18px; text-align: center; display: grid; gap: 12px; place-items: center;
   }
   .quiz-stem .quiz-prompt {
-    font-size: clamp(1.7rem, 3.4vw, 2.6rem); margin: 0; line-height: 1.45; font-weight: 800;
+    font-size: clamp(1.25rem, 3.2vw, 2.1rem); margin: 0; line-height: 1.45; font-weight: 800;
+    white-space: normal; overflow: visible; max-width: 100%;
   }
   .quiz-stem .stem-img {
-    width: min(100%, 860px); max-height: 38vh; object-fit: contain; border-radius: 12px; background: #fff;
+    width: min(100%, 860px); max-height: 32vh; object-fit: contain; border-radius: 12px; background: #fff;
   }
   .listen-btn {
     min-height: 52px; padding: 0 22px; background: #1368ce; color: #fff;
@@ -173,26 +183,27 @@
   @keyframes listen-pulse { 50% { transform: scale(1.04); } }
   @media (prefers-reduced-motion: reduce) { .listen-btn.playing { animation: none; } }
   .choices {
-    flex: 1; min-height: 0; display: grid; gap: 10px;
-    grid-template-columns: 1fr 1fr; grid-auto-rows: 1fr;
+    flex: 0 0 auto; min-height: 0; display: grid; gap: 10px;
+    grid-template-columns: 1fr 1fr; grid-auto-rows: auto;
   }
   .choices.pics { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .choices.sents {
     grid-template-columns: 1fr;
-    grid-auto-rows: minmax(84px, 1fr);
+    grid-auto-rows: auto;
   }
   .choices.sents button.pick {
-    height: auto; min-height: 84px; white-space: normal; line-height: 1.4;
-    font-size: clamp(1.2rem, 2.2vw, 1.8rem); padding: 16px 20px; overflow: visible;
+    height: auto; min-height: 72px; white-space: normal; line-height: 1.4;
+    font-size: clamp(1.15rem, 2.2vw, 1.7rem); padding: 14px 16px; overflow: visible;
   }
   .choices button.pick {
-    min-height: 0; height: 100%; width: 100%; color: #fff; cursor: pointer;
-    font-size: clamp(1.7rem, 4.2vw, 3rem); font-weight: 800; border-radius: 16px;
-    padding: 16px; display: grid; place-items: center; text-align: center;
+    min-height: 56px; height: auto; width: 100%; color: #fff; cursor: pointer;
+    font-size: clamp(1.35rem, 3.6vw, 2.2rem); font-weight: 800; border-radius: 16px;
+    padding: 14px; display: grid; place-items: center; text-align: center;
+    overflow: visible; white-space: normal;
   }
-  .choices.pics button.pick { padding: 8px; }
+  .choices.pics button.pick { padding: 8px; min-height: 0; }
   .choices.pics button.pick img {
-    width: 100%; height: 100%; max-height: none; object-fit: cover;
+    width: 100%; height: auto; max-height: 22vh; object-fit: contain;
     background: #fff; border-radius: 12px; display: block;
   }
   .pick-0 { background: #e21b3c; }
@@ -260,12 +271,22 @@
   @media (min-width: 960px) {
     .stage { grid-template-columns: minmax(0,1.2fr) minmax(380px,0.95fr); grid-template-rows: minmax(0,1fr); }
     .quiz-stem .stem-img { max-height: 42vh; }
+    .choices.pics button.pick img { max-height: 26vh; }
   }
   @media (max-width: 959px) {
     .stage { grid-template-rows: minmax(28vh, 0.85fr) minmax(0, 1.2fr); }
     .line { font-size: clamp(1.55rem, 6.2vw, 2.3rem); }
     .tabs button, .subbar button { min-height: 48px; padding: 0 10px; font-size: 0.95rem; }
     footer button { min-width: 96px; }
+    #quizBody.pic-sent {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto auto;
+    }
+    #quizBody.pic-sent .quiz-stem { height: auto; }
+    #quizBody.pic-sent .stem-img { max-height: 22vh; }
+    .choices.pics { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .choices.pics button.pick img { max-height: 18vh; }
+    .board { grid-template-columns: 1fr; }
   }
   @media (max-width: 640px) {
     header { flex-wrap: wrap; }
@@ -273,17 +294,22 @@
     header > div { min-width: 0; flex: 1; }
     header label { flex-shrink: 0; }
     .panel { padding: 12px 10px; }
-    .board { gap: 8px; }
+    .board { gap: 8px; grid-template-columns: 1fr; }
     #literacyPanel .tile { min-height: 108px; padding: 10px 4px; overflow: visible; }
     .bpmf-card { min-height: 4.8rem; min-width: 2rem; }
     .bpmf-card .sym, .bpmf-card .tone { font-size: 1.45rem; }
     .bpmf-card .tone { font-size: 1.55rem; }
     #literacyPanel .tile .han { font-size: 1.65rem; }
-    .choices { grid-template-columns: 1fr 1fr; }
-    .choices.pics { grid-template-columns: 1fr; }
-    .choices.sents button.pick { min-height: 72px; font-size: 1.2rem; }
-    .choices button.pick { font-size: clamp(1.5rem, 7vw, 2.2rem); min-height: 72px; }
-    .quiz-stem .stem-img { max-height: 28vh; }
+    .choices { grid-template-columns: 1fr; grid-auto-rows: auto; }
+    .choices.pics { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .choices.pics button.pick img { max-height: 16vh; }
+    .choices.sents button.pick { min-height: 72px; font-size: 1.15rem; height: auto; overflow: visible; }
+    .choices button.pick { font-size: clamp(1.2rem, 5vw, 1.7rem); min-height: 56px; height: auto; }
+    .quiz-stem { padding: 10px 12px; }
+    .quiz-stem .quiz-prompt { font-size: clamp(1.1rem, 4.4vw, 1.45rem); }
+    .quiz-stem .stem-img { max-height: 22vh; }
+    .tile { min-height: 64px; font-size: 1.15rem; }
+    .tile img { max-height: 18vh; width: 100%; object-fit: contain; }
   }
 </style>
 </head>
@@ -574,8 +600,11 @@ function bindSpeakable(el, html, speak, audio) {
 }
 function renderRead() {
   const pages = currentPages();
-  const page = pages[index] || pages[0];
-  const block = page[trackOf()];
+  if (!pages.length) return;
+  if (index >= pages.length) index = 0;
+  const page = pages[index];
+  if (!page) return;
+  const block = page[trackOf()] || {};
   const isCover = page.kind === "cover";
   document.getElementById("doc-title").textContent = LESSON.title;
   document.getElementById("meta").textContent = LESSON.author || "";
@@ -1010,13 +1039,18 @@ function pickLit(tile) {
 function quizBank() {
   return readPages().filter((p) => p.kind === "read" && p.image);
 }
+function quizBodyEl() {
+  const body = document.getElementById("quizBody");
+  body.className = quizMode === "pic-sent" ? "pic-sent" : "";
+  return body;
+}
 function sentenceOf(page, track) {
   return (page[track].speakLines || []).join("");
 }
 function renderSentMatch(bank, track) {
   const n = Math.min(quizLimit, bank.length);
   const items = shuffle(bank).slice(0, n);
-  const body = document.getElementById("quizBody");
+  const body = quizBodyEl();
   body.innerHTML = "";
   const board = document.createElement("div");
   board.className = "board";
@@ -1208,7 +1242,7 @@ function renderItemQuiz(kind) {
   }
   const item = quizQueue[quizCursor];
   const distract = shuffle(pool.filter((x) => x.key !== item.key)).slice(0, 3);
-  const body = document.getElementById("quizBody");
+  const body = quizBodyEl();
   body.innerHTML = "";
   body.appendChild(stemCard(item.zhuyinHtml || item.zhuyin || item.word, async () => {
     if (item.audio) await playUrl(item.audio); else speak(item.word);
@@ -1245,7 +1279,7 @@ function renderQuiz() {
   quizUsedIds.push(item.id);
   const sentence = sentenceOf(item, track);
   const others = shuffle(bank.filter((p) => p.id !== item.id)).slice(0, 2);
-  const body = document.getElementById("quizBody");
+  const body = quizBodyEl();
   body.innerHTML = "";
   if (quizMode === "sent-pic") {
     body.appendChild(stemCard(sentence, async () => {
@@ -1287,6 +1321,7 @@ function renderQuiz() {
   setStatus("quizMsg", quizIdlePrompt());
 }
 function setTab(next) {
+  if (next === "practice" && !practicePages().length) next = "original";
   tab = next;
   stopSpeech();
   if (index >= currentPages().length) index = 0;
@@ -1346,7 +1381,7 @@ document.getElementById("prev").onclick = () => { stopSpeech(); index = Math.max
 document.getElementById("next").onclick = () => { stopSpeech(); index = Math.min(currentPages().length - 1, index + 1); renderRead(); };
 document.getElementById("speak").onclick = speakPage;
 document.addEventListener("keydown", (ev) => {
-  if (tab !== "original" && tab !== "simple") return;
+  if (!isReadTab()) return;
   if (ev.key === "ArrowLeft") document.getElementById("prev").click();
   if (ev.key === "ArrowRight") document.getElementById("next").click();
   if (ev.key === " ") { ev.preventDefault(); speakPage(); }
