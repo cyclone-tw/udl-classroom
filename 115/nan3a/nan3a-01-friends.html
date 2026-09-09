@@ -166,11 +166,18 @@
   .quiz-stem {
     flex: 0 0 auto; background: var(--card); border: 3px solid var(--line); border-radius: 20px;
     padding: 16px 18px; text-align: center; display: grid; gap: 12px; place-items: center;
+    overflow: visible; max-width: 100%;
   }
   .quiz-stem .quiz-prompt {
     font-size: clamp(1.25rem, 3.2vw, 2.1rem); margin: 0; line-height: 1.45; font-weight: 800;
     white-space: normal; overflow: visible; max-width: 100%;
+    display: flex; flex-wrap: wrap; justify-content: center; align-items: center;
   }
+  .quiz-stem .bpmf-card { min-height: 3.6rem; min-width: 1.8rem; }
+  .quiz-stem .bpmf-card .col { min-width: 1.35rem; }
+  .quiz-stem .bpmf-card .sym, .quiz-stem .bpmf-card .tone { font-size: 1.35rem; }
+  .quiz-stem .bpmf-card .tone { font-size: 1.45rem; }
+  .quiz-stem .phrase-zhuyin { gap: 0.28em; }
   .quiz-stem .stem-img {
     width: min(100%, 860px); max-height: 32vh; object-fit: contain; border-radius: 12px; background: #fff;
   }
@@ -211,6 +218,7 @@
   .pick-2 { background: #d89e00; }
   .pick-3 { background: #26890c; }
   .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 12px; margin-top: 12px; font-size: 1.2rem; }
+  #quizMsg.card { margin-top: 0; }
   .ok { color: var(--ok); font-weight: 700; }
   .no { color: #b91c1c; font-weight: 700; }
   header button, footer button, header select { background: var(--btn); color: #fff; padding: 0 16px; cursor: pointer; }
@@ -282,8 +290,20 @@
   .student-code input { min-height: 44px; padding: 0 10px; border: 1px solid var(--line); border-radius: 10px; font: inherit; }
   @media (min-width: 960px) {
     .stage { grid-template-columns: minmax(0,1.2fr) minmax(380px,0.95fr); grid-template-rows: minmax(0,1fr); }
-    .quiz-stem .stem-img { max-height: 42vh; }
-    .choices.pics button.pick img { max-height: 26vh; }
+    #quizPlay { gap: 8px; }
+    #quizBody { gap: 8px; }
+    .scorebar { padding: 4px 4px 6px; }
+    .quiz-stem { padding: 10px 14px; gap: 8px; }
+    .quiz-stem .stem-img { max-height: 22vh; }
+    #quizBody.pic-sent .stem-img { max-height: min(36vh, 100%); }
+    .listen-btn { min-height: 44px; font-size: 1rem; padding: 0 16px; }
+    .choices { flex: 1 1 auto; min-height: 0; grid-auto-rows: minmax(52px, 1fr); }
+    .choices button.pick { min-height: 52px; font-size: clamp(1.15rem, 1.8vw, 1.7rem); padding: 10px 12px; }
+    .choices.sents button.pick { min-height: 56px; font-size: clamp(1.05rem, 1.5vw, 1.45rem); padding: 10px 14px; }
+    .choices.pics button.pick img { max-height: 16vh; }
+    #quizBody.pic-sent .choices.pics button.pick img { max-height: 18vh; }
+    .replay-wrap { padding: 4px 4px 0; }
+    .replay-btn { min-height: 48px; }
   }
   @media (max-width: 959px) {
     .stage { grid-template-rows: minmax(28vh, 0.85fr) minmax(0, 1.2fr); }
