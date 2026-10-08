@@ -599,7 +599,7 @@
   .guide { margin: 0; font-weight: 700; color: var(--mute); }
   .guide b { color: var(--ink); }
   .seg { display: inline-flex; gap: var(--sp-2); padding: var(--sp-2); border-radius: var(--radius-control); background: var(--quiet-bg); }
-  .seg button { min-height: var(--touch-compact); padding: 0 var(--sp-7); background: transparent; color: var(--quiet-ink); font-weight: 700; cursor: pointer; }
+  .seg button { min-height: var(--touch); padding: 0 var(--sp-7); background: transparent; color: var(--quiet-ink); font-weight: 700; cursor: pointer; }
   .seg button[aria-pressed="true"] { background: var(--seg-on-bg); color: var(--seg-on-ink); }
   .actions {
     display: flex; align-items: center; gap: var(--sp-6); padding: var(--sp-4) var(--sp-7);
@@ -639,9 +639,9 @@
   .teacher-card h2 { margin: 0; font-size: var(--fs-result); }
   .teacher-note { margin: 0; color: var(--mute); font-size: var(--fs-small); }
   .teacher-card label { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-6); font-weight: 700; }
-  .teacher-card select { min-height: var(--touch-compact); padding: 0 var(--sp-5); background: var(--quiet-bg); color: var(--quiet-ink); }
+  .teacher-card select { min-height: var(--touch); padding: 0 var(--sp-5); background: var(--quiet-bg); color: var(--quiet-ink); }
   .teacher-card button { background: var(--btn-bg); color: var(--btn-ink); font-weight: 800; cursor: pointer; }
-  .mini { min-height: var(--touch-compact); padding: 0 var(--sp-6); background: var(--quiet-bg); color: var(--quiet-ink); cursor: pointer; font-size: var(--fs-small); }
+  .mini { min-height: var(--touch); padding: 0 var(--sp-6); background: var(--quiet-bg); color: var(--quiet-ink); cursor: pointer; font-size: var(--fs-small); }
   h1 { font-size: var(--fs-h1); margin: 0; }
   .stage { min-height: 0; display: grid; grid-template-rows: var(--read-rows); }
   .scene-wrap {
@@ -738,7 +738,7 @@
     min-height: 0; display: grid; grid-template-rows: auto minmax(0, 1fr); gap: var(--sp-5);
     overflow: auto; -webkit-overflow-scrolling: touch;
   }
-  #quizBody:has(> .board) { grid-template-rows: auto; overflow: auto; -webkit-overflow-scrolling: touch; }
+  #quizBody.match { grid-template-rows: auto; }
   #quizBody.pic-sent {
     display: grid;
     grid-template-columns: var(--quiz-pic-sent-cols);
@@ -958,10 +958,11 @@
     max-height: none; object-fit: contain;
   }
   #quizBody.pic-sent .quiz-stem { position: relative; }
-  .choices.sents { grid-auto-rows: minmax(0, 1fr); }
+  .choices.sents { grid-auto-rows: minmax(min-content, 1fr); }
+  .choices.sents button.pick { height: auto; }
   #quizBody.pic-sent { grid-template-columns: var(--quiz-pic-sent-cols); grid-template-rows: minmax(0, 1fr); }
   #quizBody.pic-sent .quiz-stem { height: 100%; grid-template-rows: minmax(0, 1fr); }
-  #quizBody:has(> .board) .tile img { max-height: var(--img-tile); }
+  #quizBody.match .tile img { max-height: var(--img-tile); }
   #literacyPanel .board { flex: 1; min-height: 0; overflow: auto; }
   #literacyPanel .board { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
   #literacyPanel .board > div { display: grid; grid-template-rows: auto minmax(0, 1fr); min-height: 0; }
@@ -1829,7 +1830,7 @@ function quizBank() {
 }
 function quizBodyEl() {
   const body = document.getElementById("quizBody");
-  body.className = quizMode === "pic-sent" ? "pic-sent" : "";
+  body.className = quizMode === "pic-sent" ? "pic-sent" : quizMode === "sent-match" ? "match" : "";
   return body;
 }
 function sentenceOf(page, track) {
@@ -2192,7 +2193,13 @@ teacherOpen.onclick = () => {
 };
 document.getElementById("teacherForm").addEventListener("submit", (ev) => { ev.preventDefault(); closeTeacher(); });
 document.addEventListener("keydown", (ev) => {
-  if (ev.key === "Escape" && teacher.classList.contains("open")) closeTeacher();
+  if (!teacher.classList.contains("open")) return;
+  if (ev.key === "Escape") { closeTeacher(); return; }
+  if (ev.key !== "Tab") return;
+  const items = [...teacher.querySelectorAll("select, button")];
+  const first = items[0], last = items[items.length - 1];
+  if (ev.shiftKey && document.activeElement === first) { ev.preventDefault(); last.focus(); }
+  else if (!ev.shiftKey && document.activeElement === last) { ev.preventDefault(); first.focus(); }
 });
 document.getElementById("quizNext").onclick = () => {
   if (quizDone) return;
