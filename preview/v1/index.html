@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="udl-site-gate" content="v1">
+<title>UDL 課堂教材</title>
+<style>
+:root { color-scheme: light dark; --bg: #f6f1e4; --panel: #fffdf7; --ink: #1f2430; --line: #c9bfa8; --accent: #b3261e; }
+@media (prefers-color-scheme: dark) { :root { --bg: #141a2a; --panel: #1e2638; --ink: #eef1f7; --line: #3b4660; --accent: #ffb4ab; } }
+* { box-sizing: border-box; }
+body { margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 16px;
+  background: var(--bg); color: var(--ink); font: 20px/1.6 system-ui, -apple-system, "PingFang TC", "Noto Sans TC", sans-serif; }
+body.checking form { visibility: hidden; }
+form { display: flex; flex-direction: column; gap: 12px; width: min(420px, 100%); background: var(--panel);
+  border: 1px solid var(--line); border-radius: 12px; padding: 20px; }
+p { margin: 0; }
+input, button { font: inherit; min-height: 48px; border-radius: 8px; }
+input { padding: 0 12px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); }
+button { border: 0; background: var(--ink); color: var(--bg); font-weight: 600; cursor: pointer; }
+#gate-err { color: var(--accent); font-weight: 600; }
+</style>
+</head>
+<body class="checking">
+<form id="gate-form" autocomplete="off">
+  <p>請輸入老師給的課堂密碼。</p>
+  <input id="gate-input" type="password" autocomplete="current-password" required aria-label="課堂密碼">
+  <button type="submit">進入</button>
+  <p id="gate-busy" role="status" hidden>解開中，請稍等…</p>
+  <p id="gate-err" role="alert" hidden></p>
+</form>
+<script type="application/json" id="udl-gate">{"format":"udl-site-gate/v1","salt":"HE+KKZfyXihzeGYFczLkQA==","iterations":600000}</script>
+<script type="application/json" id="udl-sealed">{"iv":"uv1O5nhrSvfsd5gb","data":"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"}</script>
+<script type="module">
+const gate = JSON.parse(document.getElementById("udl-gate").textContent);
+const sealed = JSON.parse(document.getElementById("udl-sealed").textContent);
+const KEY_SLOT = "udl-site-key:" + gate.salt;
+const unb64 = (t) => Uint8Array.from(atob(t), (c) => c.charCodeAt(0));
+const b64 = (u) => btoa(String.fromCharCode(...u));
+const store = {
+  get(k) { try { return sessionStorage.getItem(k); } catch { return null; } },
+  set(k, v) { try { sessionStorage.setItem(k, v); } catch { /* 沒有 sessionStorage 就每頁都問 */ } },
+};
+async function keyFromPassword(password) {
+  const base = await crypto.subtle.importKey("raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveKey"]);
+  return crypto.subtle.deriveKey({ name: "PBKDF2", hash: "SHA-256", salt: unb64(gate.salt), iterations: gate.iterations },
+    base, { name: "AES-GCM", length: 256 }, true, ["decrypt"]);
+}
+async function open(key) {
+  const plain = await crypto.subtle.decrypt({ name: "AES-GCM", iv: unb64(sealed.iv) }, key, unb64(sealed.data));
+  const page = JSON.parse(new TextDecoder().decode(plain));
+  if (page.gate) store.set("udl-gate", page.gate);
+  const raw = new Uint8Array(await crypto.subtle.exportKey("raw", key));
+  store.set(KEY_SLOT, b64(raw));
+  document.open();
+  document.write(page.html);
+  document.close();
+}
+async function tryStored() {
+  const saved = store.get(KEY_SLOT);
+  if (!saved) return false;
+  try {
+    const key = await crypto.subtle.importKey("raw", unb64(saved), "AES-GCM", true, ["decrypt"]);
+    await open(key);
+    return true;
+  } catch { return false; }
+}
+const form = document.getElementById("gate-form");
+const err = document.getElementById("gate-err");
+const busy = document.getElementById("gate-busy");
+function showForm() { document.body.classList.remove("checking"); document.getElementById("gate-input").focus(); }
+if (!window.crypto || !crypto.subtle) {
+  document.body.classList.remove("checking");
+  err.textContent = "這個瀏覽器環境無法解開教材，請用 https 網址開啟。";
+  err.hidden = false;
+} else {
+  tryStored().then((ok) => { if (!ok) showForm(); });
+}
+form.addEventListener("submit", async (ev) => {
+  ev.preventDefault();
+  err.hidden = true;
+  busy.hidden = false;
+  try {
+    await open(await keyFromPassword(document.getElementById("gate-input").value));
+  } catch {
+    busy.hidden = true;
+    err.textContent = "密碼不對。";
+    err.hidden = false;
+  }
+});
+</script>
+</body>
+</html>
